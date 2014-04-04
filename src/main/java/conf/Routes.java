@@ -33,12 +33,18 @@ public class Routes implements ApplicationRoutes {
 
 	@Override
 	public void init(Router router) {
+		router.GET().route("/dogpark").with(DogParkController.class, "dogpark");
+		router.GET().route("/dogparks").with(DogParkController.class, "dogparkList");
 		router.GET().route("/").with(DogParkController.class, "index");
+
 
 		///////////////////////////////////////////////////////////////////////
 		// Assets (pictures / javascript)
 		///////////////////////////////////////////////////////////////////////
 		router.GET().route("/assets/{fileName: .*}").with(AssetsController.class, "serveStatic");
+
+		// Debug routes
+		router.GET().route("/setupTables").with(DogParkController.class, "setupTables");
 	}
 
 }
