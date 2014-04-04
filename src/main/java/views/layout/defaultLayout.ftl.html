@@ -1,91 +1,55 @@
+<#macro baseLayout title="Koirapuisto-miitit">
 <!DOCTYPE html>
 <html lang="fi">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Koirapuisto-miitit">
-    <meta name="author" content="Mikko Oksa">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="description" content="Koirapuisto-miitit">
+		<meta name="author" content="Mikko Oksa">
 
-    <title>Koirapuisto-miitit</title>
+		<title>${title}</title>
 
-    <!-- Bootstrap core CSS -->
-    <link href="assets/css/bootstrap.min.css" rel="stylesheet"> 
-    <link href="assets/css/font-awesome.min.css" rel="stylesheet">
+		<!-- Bootstrap core CSS -->
+		<link href="assets/css/bootstrap.min.css" rel="stylesheet"> 
+		<link href="assets/css/font-awesome.min.css" rel="stylesheet">
 
-    <!-- Custom styles for this template -->
-    <link href="assets/css/main.css" rel="stylesheet">
-    
-    <link href='http://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic' rel='stylesheet' type='text/css'>
-    <link href='http://fonts.googleapis.com/css?family=Raleway:400,300,700' rel='stylesheet' type='text/css'>
+		<!-- Custom styles for this template -->
+		<link href="assets/css/main.css" rel="stylesheet">
 
-    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-      <script src="assets/js/html5shiv.js"></script>
-      <script src="assets/js/respond.min.js"></script>
-    <![endif]-->
-  </head>
+		<link href='http://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic' rel='stylesheet' type='text/css'>
+		<link href='http://fonts.googleapis.com/css?family=Raleway:400,300,700' rel='stylesheet' type='text/css'>
 
-  <body>
+		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+		<!--[if lt IE 9]>
+		  <script src="assets/js/html5shiv.js"></script>
+		  <script src="assets/js/respond.min.js"></script>
+		<![endif]-->
+	</head>
 
-
-    <div class="container">
-    	<div class="col-lg-8 col-lg-offset-2">
-    	
-    		<div class="row w">
-				
-				<!-- ===== Navigation ===== -->
-    			<div class="col-md-4">
-    				<img class="img-responsive" src="assets/img/avatar.png" alt="">
-					<ul class="nav nav-tabs nav-stacked" id="myTab">
-					  <li class="active"><a href="#main">Etusivu</a></li>
-					  <li><a href="#dogparks">Koirapuistot</a></li>
-					</ul>    			
-				</div><!-- col-md-4 -->
-
-				<!-- ===== Content ===== -->
-    			<div class="col-md-8">
-	    			<div class="tab-content">
-	    			
-	    			  <!-- ===== First Tab ===== -->
-					  <div class="tab-pane active" id="main">
-					  	<h2>Koirapuisto-miitit</h2>
-					  	<hr>
-					  	<p>
-							Tällä sivustolla voit ilmoittaa meneväsi koirapuistoon, jolloin muiden on helppo nähdä, 
-							milloin omalle koiralle löytyisi sopivan kokoista leikkiseuraa!
-						</p>
-						<p>Klikkaa "Koirapuistot" ja merkkaa!</p>
-					  </div><!-- Tab Main -->
-					  
-	    			  <!-- ===== Second Tab ===== -->
-					  <div class="tab-pane" id="dogparks">
-						  <h3><i class="fa fa-map-marker"></i> Koirapuistot</h3>
-						  <hr>
-						  <h4><i class="fa fa-folder"></i> Kuopio</h4>
-						  <ul class="fa-ul">
-							  <li><i class="fa-li fa fa-angle-right"></i> <a href="#">Neulamäen koirapuisto</a></li>
-							  <li><i class="fa-li fa fa-angle-right"></i> <a href="#">Rypysuon koirapuisto</a></li>
-						  </ul>
-					  </div><!-- Tab Dog Parks -->
-					  
-					</div><!-- Tab Content -->
-    			</div><!-- col-md-8 -->
-    		</div><!-- row w -->
-    	</div><!-- col-lg-6 -->
-    </div><!-- /.container -->
+	<body>
 
 
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="assets/js/jquery.js"></script>
-    <script src="assets/js/bootstrap.min.js"></script>
-	<script>
-	$('#myTab a').click(function (e) {
-	  e.preventDefault()
-	  $(this).tab('show')
-	})	
-	</script>    
-    
-  </body>
+		<div class="container">
+			<div class="col-lg-8 col-lg-offset-2">
+
+				<div class="row w">
+					<!-- ===== Navigation ===== -->
+					<#include "../layout/navigation.ftl.html"/>
+					
+					<!-- ===== Content ===== -->
+					<#nested/>
+					
+				</div><!-- row w -->
+			</div><!-- col-lg-6 -->
+		</div><!-- /.container -->
+
+
+		<!-- Bootstrap core JavaScript
+		================================================== -->
+		<!-- Placed at the end of the document so the pages load faster -->
+		<script src="assets/js/jquery.js"></script>
+		<script src="assets/js/bootstrap.min.js"></script>
+
+	</body>
 </html>
+</#macro>

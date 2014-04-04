@@ -12,7 +12,8 @@ body {
     font-weight: 300;
     font-size: 16px;
     color: #555;
-    padding-top: 150px;
+    padding-top: 50px;
+	padding-bottom: 50px;
 	background-image: url("../img/bg.png");
 	background-repeat: repeat;
 /*	background-color: #5e5e5e; */
@@ -87,11 +88,12 @@ a:after {
 	padding-right: 0px;
 }
 
+/*
 .col-md-8 {
 	padding-left: 0px;
 	padding-right: 0px;
 }
-
+*/
 
 .nav-tabs {
 	border-bottom: 1px solid #dddddd;
@@ -157,4 +159,9 @@ a h6:hover {
 grey {
 	color: #bdc3c7;
 	font-weight: 700;
+}
+
+iframe {
+	margin: 15px; 
+	border: 1px solid #bdc3c7;
 }
