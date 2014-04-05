@@ -34,9 +34,9 @@ import models.City;
 import models.DogPark;
 import ninja.Result;
 import ninja.Results;
-import ninja.params.Param;
+import ninja.params.PathParam;
 
-
+//@FilterWith(LatencySimulatorFilter.class)
 @Singleton
 public class DogParkController {
 
@@ -58,7 +58,7 @@ public class DogParkController {
 		return Results.html().render("cities", cities);
 	}
 
-	public Result dogpark(@Param("id") Long dogParkId) {
+	public Result dogpark(@PathParam("id") Long dogParkId) {
 		if (dogParkId == null) {
 			return Results.html().template("views/system/404notFound.ftl.html");
 		}

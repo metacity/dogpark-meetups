@@ -33,7 +33,7 @@ public class Routes implements ApplicationRoutes {
 
 	@Override
 	public void init(Router router) {
-		router.GET().route("/dogpark").with(DogParkController.class, "dogpark");
+		router.GET().route("/dogparks/{id}").with(DogParkController.class, "dogpark");
 		router.GET().route("/dogparks").with(DogParkController.class, "dogparkList");
 		router.GET().route("/").with(DogParkController.class, "index");
 

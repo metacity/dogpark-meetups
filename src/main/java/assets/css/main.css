@@ -16,7 +16,7 @@ body {
 	padding-bottom: 50px;
 	background-image: url("../img/bg.png");
 	background-repeat: repeat;
-/*	background-color: #5e5e5e; */
+	/*	background-color: #94897A;*/
 }
 
 /* Titles */
@@ -65,7 +65,7 @@ a:after {
     transition: color 0.1s ease-in, background 0.1s ease-in;
 }
 
- hr {
+hr {
     display: block;
     height: 1px;
     border: 0;
@@ -128,9 +128,11 @@ a:after {
 
 .tab-content {
 	background-color: #ffffff;
-	padding-left: 15px;
-	padding-top: 20px;
-	padding-right: 15px;
+	padding: 10px;
+	margin: 10px;
+	/*	padding-left: 15px;
+		padding-top: 20px;
+		padding-right: 15px;*/
 }
 
 .tab-content h5 {
@@ -162,6 +164,15 @@ grey {
 }
 
 iframe {
-	margin: 15px; 
+
 	border: 1px solid #bdc3c7;
+}
+
+.tab-content h2,
+.tab-content h3 {
+	margin: 0px;
+}
+
+.spinner {
+	min-height: 50px;
 }
