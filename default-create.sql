@@ -18,6 +18,7 @@ create table dogpark_signup (
   arrival_time              datetime not null,
   dog_breed                 varchar(255),
   dog_weight                integer not null,
+  cancellation_code         varchar(255) not null,
   dogpark_id                bigint,
   constraint pk_dogpark_signup primary key (id))
 ;

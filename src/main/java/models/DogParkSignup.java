@@ -41,6 +41,7 @@ public class DogParkSignup {
 	public static final String COL_ARRIVAL_TIME = "arrival_time";
 	public static final String COL_DOG_BREED = "dog_breed";
 	public static final String COL_DOG_WEIGHT = "dog_weight";
+	public static final String COL_CANCELLATION_CODE = "cancellation_code";
 	public static final String COL_DOGPARK_ID = "dogpark_id";
 
 	@Id
@@ -54,6 +55,9 @@ public class DogParkSignup {
 
 	@Column(name = COL_DOG_WEIGHT, nullable = false)
 	private Integer dogWeight;
+
+	@Column(name = COL_CANCELLATION_CODE, nullable = false)
+	private String cancellationCode;
 
 	@ManyToOne
 	@JoinColumn(name = COL_DOGPARK_ID, nullable = false)
