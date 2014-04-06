@@ -41,6 +41,7 @@ public class DogParkSignup {
 	public static final String COL_ARRIVAL_TIME = "arrival_time";
 	public static final String COL_DOG_BREED = "dog_breed";
 	public static final String COL_DOG_WEIGHT = "dog_weight";
+	public static final String COL_DOG_IS_MALE = "dog_is_male";
 	public static final String COL_CANCELLATION_CODE = "cancellation_code";
 	public static final String COL_DOGPARK_ID = "dogpark_id";
 
@@ -54,7 +55,10 @@ public class DogParkSignup {
 	private String dogBreed;
 
 	@Column(name = COL_DOG_WEIGHT, nullable = false)
-	private Integer dogWeight;
+	private String dogWeight;
+
+	@Column(name = COL_DOG_IS_MALE, nullable = false)
+	private Boolean dogIsMale;
 
 	@Column(name = COL_CANCELLATION_CODE, nullable = false)
 	private String cancellationCode;
@@ -66,7 +70,7 @@ public class DogParkSignup {
 	public DogParkSignup() {
 	}
 
-	public DogParkSignup(Timestamp arrivalTime, String dogBreed, Integer dogWeight, DogPark dogPark) {
+	public DogParkSignup(Timestamp arrivalTime, String dogBreed, String dogWeight, DogPark dogPark) {
 		this.arrivalTime = arrivalTime;
 		this.dogBreed = dogBreed;
 		this.dogWeight = dogWeight;
@@ -97,11 +101,11 @@ public class DogParkSignup {
 		this.dogBreed = dogBreed;
 	}
 
-	public Integer getDogWeight() {
+	public String getDogWeight() {
 		return dogWeight;
 	}
 
-	public void setDogWeight(Integer dogWeight) {
+	public void setDogWeight(String dogWeight) {
 		this.dogWeight = dogWeight;
 	}
 

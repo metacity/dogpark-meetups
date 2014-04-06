@@ -17,7 +17,8 @@ create table dogpark_signup (
   id                        bigint auto_increment not null,
   arrival_time              datetime not null,
   dog_breed                 varchar(255),
-  dog_weight                integer not null,
+  dog_weight                varchar(255) not null,
+  dog_is_male               tinyint(1) default 0 not null,
   cancellation_code         varchar(255) not null,
   dogpark_id                bigint,
   constraint pk_dogpark_signup primary key (id))
