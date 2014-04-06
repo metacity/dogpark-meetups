@@ -176,3 +176,53 @@ iframe {
 .spinner {
 	min-height: 50px;
 }
+
+.responsive-calendar .day {
+	display: inline-block;
+	position: relative;
+	font-size: 14px;
+	width: 14.285714285714286%;
+	text-align: center;
+	font-size: 16px;
+}
+
+.responsive-calendar .day a {
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+}
+
+.responsive-calendar .day .badge {
+	position: absolute;
+	top: 1px;
+	right: 1px;
+	z-index: 1;
+
+	-webkit-border-top-right-radius: 2px;
+	-moz-border-radius-topright: 2px;
+	border-top-right-radius: 2px;
+	
+	-webkit-border-top-left-radius: 0;
+	-moz-border-radius-topleft: 0;
+	border-top-left-radius: 0;
+	
+	-webkit-border-bottom-right-radius: 0;
+	-moz-border-radius-bottomright: 0;
+	border-bottom-right-radius: 0;
+	
+	-webkit-border-bottom-left-radius: 5px;
+	-moz-border-radius-bottomleft: 5px;
+	border-bottom-left-radius: 5px;
+	
+	padding: 2px 5px;
+}
+
+.badge-warning {
+	background-color: #f89406;
+}
+
+.popover h3, 
+.popover label {
+	white-space: nowrap;
+	padding-right: 5px;
+}
