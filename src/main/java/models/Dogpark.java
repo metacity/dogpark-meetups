@@ -32,12 +32,13 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
 @CacheStrategy(readOnly = true, warmingQuery = "ORDER BY name")
 @Entity
 @Table(name = "dogpark")
-public class DogPark {
+public class Dogpark {
 
 	public static final String TABLE_NAME = "dogpark";
 
@@ -65,12 +66,13 @@ public class DogPark {
 	private City city;
 
 	@OneToMany(cascade = CascadeType.ALL)
-	private List<DogParkSignup> signups;
+	@OrderBy("arrival_time DESC")
+	private List<DogparkSignup> signups;
 
-	public DogPark() {
+	public Dogpark() {
 	}
 
-	public DogPark(String name, Double latitude, Double longitude, City city) {
+	public Dogpark(String name, Double latitude, Double longitude, City city) {
 		this.name = name;
 		this.latitude = latitude;
 		this.longitude = longitude;
@@ -117,11 +119,11 @@ public class DogPark {
 		this.city = city;
 	}
 
-	public List<DogParkSignup> getSignups() {
+	public List<DogparkSignup> getSignups() {
 		return signups;
 	}
 
-	public void setSignUps(List<DogParkSignup> signups) {
+	public void setSignUps(List<DogparkSignup> signups) {
 		this.signups = signups;
 	}
 
