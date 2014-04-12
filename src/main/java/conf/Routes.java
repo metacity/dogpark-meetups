@@ -24,7 +24,7 @@
 
 package conf;
 
-import controllers.DogParkController;
+import controllers.DogparkController;
 import ninja.AssetsController;
 import ninja.Router;
 import ninja.application.ApplicationRoutes;
@@ -33,9 +33,11 @@ public class Routes implements ApplicationRoutes {
 
 	@Override
 	public void init(Router router) {
-		router.GET().route("/dogparks/{id}").with(DogParkController.class, "dogpark");
-		router.GET().route("/dogparks").with(DogParkController.class, "dogparkList");
-		router.GET().route("/").with(DogParkController.class, "index");
+		router.POST().route("/dogparks/{id}/signups").with(DogparkController.class, "signup");
+		router.GET().route("/dogparks/{id}/signups").with(DogparkController.class, "dogparkSignups");
+		router.GET().route("/dogparks/{id}").with(DogparkController.class, "dogpark");
+		router.GET().route("/dogparks").with(DogparkController.class, "dogparkList");
+		router.GET().route("/").with(DogparkController.class, "index");
 
 
 		///////////////////////////////////////////////////////////////////////
@@ -44,7 +46,7 @@ public class Routes implements ApplicationRoutes {
 		router.GET().route("/assets/{fileName: .*}").with(AssetsController.class, "serveStatic");
 
 		// Debug routes
-		router.GET().route("/setupTables").with(DogParkController.class, "setupTables");
+		router.GET().route("/setupTables").with(DogparkController.class, "setupTables");
 	}
 
 }

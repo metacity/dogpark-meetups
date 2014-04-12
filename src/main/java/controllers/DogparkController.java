@@ -25,26 +25,40 @@ package controllers;
 
 import com.avaje.ebean.EbeanServer;
 import com.avaje.ebean.annotation.Transactional;
-import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import java.sql.Timestamp;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import models.City;
-import models.DogPark;
+import models.DayEvent;
+import models.DaySummary;
+import models.Dogpark;
+import models.DogparkSignup;
 import ninja.Result;
 import ninja.Results;
+import ninja.params.Param;
 import ninja.params.PathParam;
 
 //@FilterWith(LatencySimulatorFilter.class)
 @Singleton
-public class DogParkController {
+public class DogparkController {
 
 	private final Logger logger;
 	private final EbeanServer ebeanServer;
 
 	@Inject
-	public DogParkController(Logger logger, EbeanServer ebeanServer) {
+	public DogparkController(Logger logger, EbeanServer ebeanServer) {
 		this.logger = logger;
 		this.ebeanServer = ebeanServer;
 	}
@@ -58,28 +72,112 @@ public class DogParkController {
 		return Results.html().render("cities", cities);
 	}
 
-	public Result dogpark(@PathParam("id") Long dogParkId) {
-		if (dogParkId == null) {
+	public Result dogpark(@PathParam("id") Long dogparkId) {
+		if (dogparkId == null) {
 			return Results.html().template("views/system/404notFound.ftl.html");
 		}
 
-		DogPark dogPark = ebeanServer.find(DogPark.class, dogParkId);
-		if (dogPark != null) {
-			return Results.html().render("dogPark", dogPark);
+		Dogpark dogpark = ebeanServer.find(Dogpark.class, dogparkId);
+		if (dogpark != null) {
+			return Results.html().render("dogpark", dogpark);
 		} else {
 			return Results.html().template("views/system/404notFound.ftl.html");
 		}
 	}
 
+	public Result dogparkSignups(
+			@PathParam("id") Long dogparkId,
+			@Param("year") Integer year,
+			@Param("month") Integer month) {
+
+		if (dogparkId == null) {
+			return Results.notFound().json();
+		}
+
+		LocalDateTime dateLowerBound = LocalDateTime.of(year, month, 1, 0, 0);
+		LocalDateTime dateUpperBound = dateLowerBound.plusMonths(1);
+		List<DogparkSignup> signups = ebeanServer.find(DogparkSignup.class)
+				.where()
+					.eq(DogparkSignup.COL_DOGPARK_ID, dogparkId)
+					.ge(DogparkSignup.COL_ARRIVAL_TIME, Timestamp.valueOf(dateLowerBound))
+					.lt(DogparkSignup.COL_ARRIVAL_TIME, Timestamp.valueOf(dateUpperBound))
+				.findList();
+		Map<String, DaySummary> daySummaries = groupByDate(signups);
+		return Results.json().render(daySummaries);
+	}
+
+	private static Map<String, DaySummary> groupByDate(List<? extends DayEvent> monthSignups) {
+		Map<String, List<DayEvent>> daySignups = monthSignups.stream().collect(
+			Collectors.groupingBy(DayEvent::getDate)
+		);
+
+		Map<String, DaySummary> daySummaries = Maps.newHashMap();
+		daySignups.entrySet().stream().forEach((entry) -> {
+			daySummaries.put(entry.getKey(), new DaySummary(entry.getValue()));
+		});
+
+		return daySummaries;
+	}
+
+	public Result signup(
+			@PathParam("id") Long dogparkId,
+			@Param("date") String date,
+			@Param("timeOfArrival") String timeOfArrival,
+			@Param("dogWeightClass") String weightClass,
+			DogparkSignup signup) {
+
+		Dogpark dogpark = new Dogpark();
+		dogpark.setId(dogparkId);
+		signup.setDogpark(dogpark);
+
+		signup.setDogWeightClass(DogparkSignup.DogWeightClass.valueOf(weightClass));
+
+		timeOfArrival = timeOfArrival.replace('.', ':');
+		LocalDateTime arrivalTimestamp = LocalDateTime.parse(date + " " + timeOfArrival,
+				DateTimeFormatter.ofPattern("yyyy-MM-dd H:m"));
+		signup.setArrivalTime(Timestamp.from(arrivalTimestamp.toInstant(ZoneOffset.UTC)));
+
+		ebeanServer.save(signup);
+		return Results.json().render(signup);
+		// TODO: TÄSTÄ JATKUU
+	}
+
 	@Transactional
 	public Result setupTables() {
 		City kuopio = new City("Kuopio");
-		List<DogPark> kuopioDogParks = Lists.newArrayList(
-				new DogPark("Neulamäen koirapuisto", 62.887032, 27.609753, kuopio),
-				new DogPark("Rypysuon koirapuisto", 62.918761, 27.636628, kuopio)
+
+		Dogpark neulamaki = new Dogpark("Neulamäen koirapuisto", 62.887032, 27.609753, kuopio);
+		Dogpark rypysuo = new Dogpark("Rypysuon koirapuisto", 62.918761, 27.636628, kuopio);
+
+		List<DogparkSignup> signUps = Arrays.asList(
+				new DogparkSignup(
+						Timestamp.from(Instant.now().plus(Duration.ofDays(2))),
+						"Seropi",
+						DogparkSignup.DogWeightClass.KG_1_TO_5,
+						true,
+						neulamaki
+				),
+				new DogparkSignup(
+						Timestamp.from(Instant.now().plus(Duration.ofDays(2))),
+						"Kääpiosnautseri",
+						DogparkSignup.DogWeightClass.KG_5_TO_10,
+						false,
+						neulamaki
+				),
+				new DogparkSignup(
+						Timestamp.from(Instant.now().plus(Duration.ofDays(5))),
+						"Seropi",
+						DogparkSignup.DogWeightClass.KG_40_PLUS,
+						true,
+						rypysuo
+				)
 		);
+
 		ebeanServer.save(kuopio);
-		ebeanServer.save(kuopioDogParks);
+		ebeanServer.save(neulamaki);
+		ebeanServer.save(rypysuo);
+		ebeanServer.save(signUps);
+
 		return Results.text().renderRaw("Tables ok");
 	}
 
