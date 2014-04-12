@@ -1,7 +1,7 @@
 						<#list cities as city>
 						<h4><i class="fa fa-folder-o"></i> ${city.name}</h4>
 						<ul class="fa-ul">
-							<#list city.dogParks as dogpark>
+							<#list city.dogparks as dogpark>
 							<li><i class="fa-li fa fa-angle-right"></i> <a href="#dogpark" data-dogpark-id="${dogpark.id}">${dogpark.name}</a></li>
 							</#list>
 						</ul>
