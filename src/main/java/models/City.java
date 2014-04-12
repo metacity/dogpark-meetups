@@ -31,6 +31,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
 @CacheStrategy(readOnly = true, warmingQuery = "ORDER BY name")
@@ -42,7 +43,7 @@ public class City {
 
 	public static final String COL_NAME = "name";
 
-	public static final String FETCH_DOGPARKS = "dogParks";
+	public static final String FETCH_DOGPARKS = "dogparks";
 
 	@Id
 	private Long id;
@@ -51,7 +52,8 @@ public class City {
 	private String name;
 
 	@OneToMany(cascade = CascadeType.ALL)
-	private List<DogPark> dogParks;
+	@OrderBy("name ASC")
+	private List<Dogpark> dogparks;
 
 	public City() {
 	}
@@ -76,12 +78,12 @@ public class City {
 		this.name = name;
 	}
 
-	public List<DogPark> getDogParks() {
-		return dogParks;
+	public List<Dogpark> getDogparks() {
+		return dogparks;
 	}
 
-	public void setDogParks(List<DogPark> dogParks) {
-		this.dogParks = dogParks;
+	public void setDogparks(List<Dogpark> dogparks) {
+		this.dogparks = dogparks;
 	}
 
 }
