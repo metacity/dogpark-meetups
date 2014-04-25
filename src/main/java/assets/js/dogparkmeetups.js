@@ -12,6 +12,8 @@ var dogparkContainer;
 
 var calendarOptions;
 
+var visiblePopoversAnchor;
+
 $(document).ready(function() {
 	navTab = $('#nav-tab');
 	dogparkListContainer = $('#dogpark-list-container');
@@ -46,6 +48,8 @@ $(document).ready(function() {
 			day.number = day.dayEvents.length;
 			calendarOptions.events[signup.date] = day;
 			dogparkContainer.find('.responsive-calendar').responsiveCalendar('edit', calendarOptions.events);
+			visiblePopoversAnchor.popover('destroy');
+			visiblePopoversAnchor.trigger('click');
 		}, 'json');
 	});
 
@@ -73,71 +77,7 @@ function loadDogPark() {
 			'Tammikuu', 'Helmikuu', 'Maaliskuu', 'Huhtikuu', 'Toukokuu', 'Kesäkuu', 
 			'Heinäkuu', 'Elokuu', 'Syyskuu', 'Lokakuu', 'Marraskuu', 'Joulukuu'
 		],
-		onDayClick: function(events) {
-			var thisDayEvents,
-				key;
-
-			key = $(this).data('year')+ '-' 
-					+ addLeadingZero($(this).data('month')) + '-' 
-					+ addLeadingZero($(this).data('day'));
-			thisDayEvents = events[key] ? events[key].dayEvents : [];
-
-			var eventsHtml = '<ul class="list-unstyled">';
-			if (thisDayEvents.length > 0) {
-				for (var i = 0; i < thisDayEvents.length; ++i) {
-					eventsHtml += '<li><b>' + thisDayEvents[i].hour + ':</b> ' + thisDayEvents[i].name + '</li>';
-				}
-			} else {
-				eventsHtml += '<li>Ei lmoittautuneita</li>';
-			}
-			eventsHtml += '</ul><hr> \
-					<form role="form" class="signup-form" data-dogpark-id="' + dogparkId + '">\
-						<input name="date" value="' + key + '" type="hidden">\
-						<div class="form-group"> \
-							<label for="timeOfArrival">Saapumisaika <small>(esim. 13:30 tai 14.45)</small></label> \
-								<input type="text" class="form-control" name="timeOfArrival" id="timeOfArrival" placeholder="Syötä kellonaika"> \
-						</div> \
-						<div class="form-group"> \
-							<label for="dogbreed">Koiran rotu</label> \
-								<input type="text" class="form-control" name="dogBreed" id="dogbreed" placeholder="Syötä rotu"> \
-						</div> \
-						<div class="form-group"> \
-							<label for="dogweightclass">Koiran paino</label> \
-							<select class="form-control" name="dogWeightClass" id="dogweightclass"> \
-								<option value="KG_1_TO_5">1-5 kg</option> \
-								<option value="KG_5_TO_10">5-10 kg</option> \
-								<option value="KG_10_TO_15">10-15 kg</option> \
-								<option value="KG_15_TO_25">15-25 kg</option> \
-								<option value="KG_25_TO_40">25-40 kg</option> \
-								<option value="KG_40_PLUS">40+ kg</option> \
-							</select> \
-						</div> \
-						<div class="form-group"> \
-							<label class="radio-inline"> \
-								<input type="radio" name="dogIsMale" id="dogIsMale1" value="true" checked> \
-								Uros \
-							</label> \
-							<label class="radio-inline"> \
-								<input type="radio" name="dogIsMale" id="dogIsMale1" value="false"> \
-								Narttu \
-							</label> \
-						</div> \
-						<div class="centered"><button type="submit" class="btn btn-primary">Ilmoittaudu!</button></div> \
-					</form>';
-
-			$(this).popover({
-				trigger: 'manual',
-				html: true,
-				animation: false,
-				placement: 'auto top',
-				title: 'Ilmoittautuneet (' + key + ') <button type="button" class="pull-right close" aria-hidden="true">&times;</button>',
-				content: eventsHtml,
-				container: dogparkContainer
-			});
-			dogparkContainer.find('.day a').not(this).popover('destroy');
-			$(this).popover('toggle');
-			return false;
-		}
+		onDayClick: funcForPopoverShowing(dogparkId)
 	};
 	var dogparkHtml;
 	
@@ -155,9 +95,79 @@ function loadDogPark() {
 }
 
 function addLeadingZero(num) {
-    if (num < 10) {
-      return "0" + num;
-    } else {
-      return "" + num;
-    }
-  }
+	if (num < 10) {
+		return "0" + num;
+	} else {
+		return "" + num;
+	}
+}
+
+function funcForPopoverShowing(dogparkId) {
+	return function(events) {
+		var thisDayEvents,
+			key,
+			eventsHtml;
+
+		key = $(this).data('year')+ '-' 
+				+ addLeadingZero($(this).data('month')) + '-' 
+				+ addLeadingZero($(this).data('day'));
+		thisDayEvents = events[key] ? events[key].dayEvents : [];
+
+		eventsHtml = '<ul class="list-unstyled">';
+		if (thisDayEvents.length > 0) {
+			for (var i = 0; i < thisDayEvents.length; ++i) {
+				eventsHtml += '<li><b>' + thisDayEvents[i].hour + ':</b> ' + thisDayEvents[i].name + '</li>';
+			}
+		} else {
+			eventsHtml += '<li>Ei lmoittautuneita</li>';
+		}
+		eventsHtml += '</ul><hr> \
+				<form role="form" class="signup-form" data-dogpark-id="' + dogparkId + '">\
+					<input name="date" value="' + key + '" type="hidden">\
+					<div class="form-group"> \
+						<label for="timeOfArrival">Saapumisaika <small>(esim. 13:30 tai 14.45)</small></label> \
+							<input type="text" class="form-control" name="timeOfArrival" id="timeOfArrival" placeholder="Syötä kellonaika"> \
+					</div> \
+					<div class="form-group"> \
+						<label for="dogbreed">Koiran rotu</label> \
+							<input type="text" class="form-control" name="dogBreed" id="dogbreed" placeholder="Syötä rotu"> \
+					</div> \
+					<div class="form-group"> \
+						<label for="dogweightclass">Koiran paino</label> \
+						<select class="form-control" name="dogWeightClass" id="dogweightclass"> \
+							<option value="KG_1_TO_5">1-5 kg</option> \
+							<option value="KG_5_TO_10">5-10 kg</option> \
+							<option value="KG_10_TO_15">10-15 kg</option> \
+							<option value="KG_15_TO_25">15-25 kg</option> \
+							<option value="KG_25_TO_40">25-40 kg</option> \
+							<option value="KG_40_PLUS">40+ kg</option> \
+						</select> \
+					</div> \
+					<div class="form-group"> \
+						<label class="radio-inline"> \
+							<input type="radio" name="dogIsMale" id="dogIsMale1" value="true" checked> \
+							Uros \
+						</label> \
+						<label class="radio-inline"> \
+							<input type="radio" name="dogIsMale" id="dogIsMale1" value="false"> \
+							Narttu \
+						</label> \
+					</div> \
+					<div class="centered"><button type="submit" class="btn btn-primary">Ilmoittaudu!</button></div> \
+				</form>';
+
+		visiblePopoversAnchor = $(this);
+		visiblePopoversAnchor.popover({
+			trigger: 'manual',
+			html: true,
+			animation: false,
+			placement: 'auto top',
+			title: 'Ilmoittautuneet (' + key + ') <button type="button" class="pull-right close" aria-hidden="true">&times;</button>',
+			content: eventsHtml,
+			container: dogparkContainer
+		});
+		dogparkContainer.find('.day a').not(this).popover('destroy');
+		$(this).popover('toggle');
+		return false;
+	};
+}
