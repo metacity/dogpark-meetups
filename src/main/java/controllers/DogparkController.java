@@ -94,13 +94,14 @@ public class DogparkController {
 			return Results.notFound().json();
 		}
 
-		LocalDateTime dateLowerBound = LocalDateTime.of(year, month, 1, 0, 0);
-		LocalDateTime dateUpperBound = dateLowerBound.plusMonths(1);
+		LocalDateTime dateLowerBound = LocalDateTime.of(year, month, 1, 0, 0).minusMonths(1);
+		LocalDateTime dateUpperBound = dateLowerBound.plusMonths(6);
 		List<DogparkSignup> signups = ebeanServer.find(DogparkSignup.class)
 				.where()
 					.eq(DogparkSignup.COL_DOGPARK_ID, dogparkId)
 					.ge(DogparkSignup.COL_ARRIVAL_TIME, Timestamp.valueOf(dateLowerBound))
 					.lt(DogparkSignup.COL_ARRIVAL_TIME, Timestamp.valueOf(dateUpperBound))
+				.orderBy(DogparkSignup.COL_ARRIVAL_TIME)
 				.findList();
 		Map<String, DaySummary> daySummaries = groupByDate(signups);
 		return Results.json().render(daySummaries);
@@ -139,11 +140,16 @@ public class DogparkController {
 
 		ebeanServer.save(signup);
 		return Results.json().render(signup);
-		// TODO: TÄSTÄ JATKUU
 	}
 
 	@Transactional
 	public Result setupTables() {
+		setupKuopio();
+
+		return Results.text().renderRaw("Tables ok");
+	}
+
+	private void setupKuopio() {
 		City kuopio = new City("Kuopio");
 
 		Dogpark neulamaki = new Dogpark("Neulamäen koirapuisto", 62.887032, 27.609753, kuopio);
@@ -177,8 +183,6 @@ public class DogparkController {
 		ebeanServer.save(neulamaki);
 		ebeanServer.save(rypysuo);
 		ebeanServer.save(signUps);
-
-		return Results.text().renderRaw("Tables ok");
 	}
 
 }
