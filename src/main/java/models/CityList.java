@@ -24,30 +24,6 @@
 
 package models;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import java.util.List;
+import java.util.ArrayList;
 
-public class DaySummary {
-
-	private final String badgeClass = "badge-warning";
-	private final List<DayEvent> dayEvents;
-
-	public DaySummary(List<DayEvent> dayEvents) {
-		this.dayEvents = dayEvents;
-	}
-
-	@JsonProperty("number")
-	public int getNumber() {
-		return dayEvents.size();
-	}
-
-	@JsonProperty("badgeClass")
-	public String getBadgeClass() {
-		return "badge-warning";
-	}
-
-	public List<DayEvent> getDayEvents() {
-		return dayEvents;
-	}
-
-}
+public class CityList extends ArrayList<City> {}

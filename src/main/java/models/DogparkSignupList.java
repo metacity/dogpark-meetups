@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2014 metacity.
+ * Copyright 2014 Mikko Oksa.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,15 +24,6 @@
 
 package models;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.ArrayList;
 
-public interface DayEvent {
-
-	String getDate();
-
-	@JsonProperty("name")
-	String getName();
-
-	@JsonProperty("hour")
-	String getHour();
-}
+public class DogparkSignupList extends ArrayList<DogparkSignup> {}

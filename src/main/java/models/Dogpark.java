@@ -23,108 +23,24 @@
  */
 package models;
 
-import com.avaje.ebean.annotation.CacheStrategy;
-import java.util.List;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
-import javax.persistence.Table;
 
-@CacheStrategy(readOnly = true, warmingQuery = "ORDER BY name")
-@Entity
-@Table(name = "dogpark")
 public class Dogpark {
 
-	public static final String TABLE_NAME = "dogpark";
+	public String id;
 
-	public static final String COL_NAME = "name";
-	public static final String COL_LATITUDE = "latitude";
-	public static final String COL_LONGITUDE = "longitude";
-	public static final String COL_CITY_ID = "city_id";
+	public String name;
 
-	public static final String FETCH_SIGNUPS = "signups";
+	public double latitude;
 
-	@Id
-	private Long id;
-
-	@Column(name = COL_NAME, nullable = false)
-	private String name;
-
-	@Column(name = COL_LATITUDE, nullable = false)
-	private Double latitude;
-
-	@Column(name = COL_LONGITUDE, nullable = false)
-	private Double longitude;
-
-	@ManyToOne
-	@JoinColumn(name = COL_CITY_ID, nullable = false)
-	private City city;
-
-	@OneToMany(cascade = CascadeType.ALL)
-	@OrderBy("arrival_time DESC")
-	private List<DogparkSignup> signups;
+	public double longitude;
 
 	public Dogpark() {
 	}
 
-	public Dogpark(String name, Double latitude, Double longitude, City city) {
-		this.name = name;
-		this.latitude = latitude;
-		this.longitude = longitude;
-		this.city = city;
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
+	public Dogpark(String id, String name, double latitude, double longitude) {
 		this.id = id;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
 		this.name = name;
-	}
-
-	public Double getLatitude() {
-		return latitude;
-	}
-
-	public void setLatitude(Double latitude) {
 		this.latitude = latitude;
-	}
-
-	public Double getLongitude() {
-		return longitude;
-	}
-
-	public void setLongitude(Double longitude) {
 		this.longitude = longitude;
 	}
-
-	public City getCity() {
-		return city;
-	}
-
-	public void setCity(City city) {
-		this.city = city;
-	}
-
-	public List<DogparkSignup> getSignups() {
-		return signups;
-	}
-
-	public void setSignUps(List<DogparkSignup> signups) {
-		this.signups = signups;
-	}
-
 }

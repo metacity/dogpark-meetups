@@ -24,66 +24,22 @@
 
 package models;
 
-import com.avaje.ebean.annotation.CacheStrategy;
+import java.util.ArrayList;
 import java.util.List;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
-import javax.persistence.Table;
 
-@CacheStrategy(readOnly = true, warmingQuery = "ORDER BY name")
-@Entity
-@Table(name = "city")
 public class City {
 
-	public static final String TABLE_NAME = "city";
+	public String id;
 
-	public static final String COL_NAME = "name";
+	public String name;
 
-	public static final String FETCH_DOGPARKS = "dogparks";
-
-	@Id
-	private Long id;
-
-	@Column(name = COL_NAME, nullable = false)
-	private String name;
-
-	@OneToMany(cascade = CascadeType.ALL)
-	@OrderBy("name ASC")
-	private List<Dogpark> dogparks;
+	public List<Dogpark> dogparks = new ArrayList<>();
 
 	public City() {
 	}
 
-	public City(String name) {
+	public City(String id, String name) {
 		this.name = name;
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public List<Dogpark> getDogparks() {
-		return dogparks;
-	}
-
-	public void setDogparks(List<Dogpark> dogparks) {
-		this.dogparks = dogparks;
 	}
 
 }
