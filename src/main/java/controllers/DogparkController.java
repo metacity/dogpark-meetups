@@ -23,166 +23,229 @@
  */
 package controllers;
 
-import com.avaje.ebean.EbeanServer;
-import com.avaje.ebean.annotation.Transactional;
-import com.google.common.collect.Maps;
+import com.basho.riak.client.IRiakClient;
+import com.basho.riak.client.RiakException;
+import com.basho.riak.client.RiakFactory;
+import com.basho.riak.client.RiakRetryFailedException;
+import com.basho.riak.client.bucket.Bucket;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import java.sql.Timestamp;
 import java.time.Duration;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.YearMonth;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.logging.Logger;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import models.City;
-import models.DayEvent;
-import models.DaySummary;
+import models.CityList;
 import models.Dogpark;
 import models.DogparkSignup;
+import models.DogparkSignupList;
 import ninja.Result;
 import ninja.Results;
+import ninja.Router;
+import ninja.lifecycle.Dispose;
+import ninja.lifecycle.Start;
 import ninja.params.Param;
 import ninja.params.PathParam;
+import ninja.utils.NinjaProperties;
+import org.slf4j.Logger;
 
 //@FilterWith(LatencySimulatorFilter.class)
 @Singleton
 public class DogparkController {
 
+	public static final String RIAK_HOST = "riak.host";
+	public static final String RIAK_PORT = "riak.port";
+
+	public static final String BUCKET_NAME = "dogparkmeetups";
+	public static final String KEY_CITIES = "cities";
+
+	public static final String VIEW_404_NOT_FOUND = "views/system/404notFound.ftl.html";
+
 	private final Logger logger;
-	private final EbeanServer ebeanServer;
+	private final NinjaProperties properties;
+	private final Router router;
+
+	private IRiakClient riakClient;
+	private Bucket bucket;
 
 	@Inject
-	public DogparkController(Logger logger, EbeanServer ebeanServer) {
+	public DogparkController(Logger logger, NinjaProperties properties, Router router) {
 		this.logger = logger;
-		this.ebeanServer = ebeanServer;
+		this.properties = properties;
+		this.router = router;
+	}
+
+	@Start(order = 10)
+	public void initRiakClientAndBucket() throws RiakException {
+		String host = properties.getWithDefault(RIAK_HOST, "127.0.0.1");
+		int port = properties.getIntegerWithDefault(RIAK_PORT, 8087);
+
+		logger.info("Initializing RiakClient on " + host + ":" + port + "...");
+		riakClient = RiakFactory.pbcClient(host, port);
+		bucket = riakClient.fetchBucket(BUCKET_NAME).execute();
+	}
+
+	@Dispose(order = 10)
+	public void shutdownRiakClient() {
+		if (riakClient != null) {
+			logger.info("Shutting down RiakClient...");
+			riakClient.shutdown();
+		}
 	}
 
 	public Result index() {
 		return Results.html();
 	}
 
-	public Result dogparkList() {
-		List<City> cities = ebeanServer.find(City.class).fetch(City.FETCH_DOGPARKS).findList();
+	public Result dogparkList() throws RiakRetryFailedException {
+		CityList cities = bucket.fetch(KEY_CITIES, CityList.class).execute();
 		return Results.html().render("cities", cities);
 	}
 
-	public Result dogpark(@PathParam("id") Long dogparkId) {
+	public Result dogpark(@PathParam("id") String dogparkId) throws RiakRetryFailedException {
 		if (dogparkId == null) {
-			return Results.html().template("views/system/404notFound.ftl.html");
+			return Results.notFound().html().template(VIEW_404_NOT_FOUND);
 		}
 
-		Dogpark dogpark = ebeanServer.find(Dogpark.class, dogparkId);
-		if (dogpark != null) {
-			return Results.html().render("dogpark", dogpark);
+		Optional<Dogpark> dogpark = getDogpark(dogparkId);
+		if (dogpark.isPresent()) {
+			return Results.html().render("dogpark", dogpark.get());
 		} else {
-			return Results.html().template("views/system/404notFound.ftl.html");
+			return Results.notFound().html().template(VIEW_404_NOT_FOUND);
 		}
 	}
 
 	public Result dogparkSignups(
-			@PathParam("id") Long dogparkId,
-			@Param("year") Integer year,
-			@Param("month") Integer month) {
+			@PathParam("id") String dogparkId,
+			@Param("yearMonth") String yearMonth) throws RiakRetryFailedException {
 
 		if (dogparkId == null) {
 			return Results.notFound().json();
 		}
 
-		LocalDateTime dateLowerBound = LocalDateTime.of(year, month, 1, 0, 0).minusMonths(1);
-		LocalDateTime dateUpperBound = dateLowerBound.plusMonths(6);
-		List<DogparkSignup> signups = ebeanServer.find(DogparkSignup.class)
-				.where()
-					.eq(DogparkSignup.COL_DOGPARK_ID, dogparkId)
-					.ge(DogparkSignup.COL_ARRIVAL_TIME, Timestamp.valueOf(dateLowerBound))
-					.lt(DogparkSignup.COL_ARRIVAL_TIME, Timestamp.valueOf(dateUpperBound))
-				.orderBy(DogparkSignup.COL_ARRIVAL_TIME)
-				.findList();
-		Map<String, DaySummary> daySummaries = groupByDate(signups);
-		return Results.json().render(daySummaries);
-	}
+		final Instant timeLower = YearMonth.parse(yearMonth).atDay(1).minusMonths(1).atStartOfDay().toInstant(ZoneOffset.UTC);
+		final Instant timeUpper = YearMonth.parse(yearMonth).atDay(1).plusMonths(6).atStartOfDay().toInstant(ZoneOffset.UTC);
+		List<DogparkSignup> signups = bucket.fetch(dogparkId, DogparkSignupList.class).execute().stream()
+				.filter(signup -> {
+					Instant arrival = signup.arrivalTime.toInstant();
+					return arrival.isAfter(timeLower) && arrival.isBefore(timeUpper);
+				})
+				.collect(Collectors.toList());
 
-	private static Map<String, DaySummary> groupByDate(List<? extends DayEvent> monthSignups) {
-		Map<String, List<DayEvent>> daySignups = monthSignups.stream().collect(
-			Collectors.groupingBy(DayEvent::getDate)
-		);
-
-		Map<String, DaySummary> daySummaries = Maps.newHashMap();
-		daySignups.entrySet().stream().forEach((entry) -> {
-			daySummaries.put(entry.getKey(), new DaySummary(entry.getValue()));
-		});
-
-		return daySummaries;
+		return Results.json().render(signups);
 	}
 
 	public Result signup(
-			@PathParam("id") Long dogparkId,
+			@PathParam("id") String dogparkId,
+			@Param("date") String date) throws RiakRetryFailedException {
+
+		// Parse to validate
+		LocalDate localDate = LocalDate.parse(date);
+
+		Optional<Dogpark> dogpark = getDogpark(dogparkId);
+		if (dogpark.isPresent()) {
+			return Results.html().render("dogpark", dogpark.get()).render("date", date);
+		}
+		return Results.notFound().html().template(VIEW_404_NOT_FOUND);
+	}
+
+	public Result doSignupPost(
+			@PathParam("id") String dogparkId,
 			@Param("date") String date,
 			@Param("timeOfArrival") String timeOfArrival,
-			@Param("dogWeightClass") String weightClass,
-			DogparkSignup signup) {
-
-		Dogpark dogpark = new Dogpark();
-		dogpark.setId(dogparkId);
-		signup.setDogpark(dogpark);
-
-		signup.setDogWeightClass(DogparkSignup.DogWeightClass.valueOf(weightClass));
+			DogparkSignup newSignup) throws RiakRetryFailedException {
 
 		timeOfArrival = timeOfArrival.replace('.', ':');
 		LocalDateTime arrivalTimestamp = LocalDateTime.parse(date + " " + timeOfArrival,
 				DateTimeFormatter.ofPattern("yyyy-MM-dd H:m"));
-		signup.setArrivalTime(Timestamp.from(arrivalTimestamp.toInstant(ZoneOffset.UTC)));
 
-		ebeanServer.save(signup);
-		return Results.json().render(signup);
+		ZoneId zoneId = ZoneId.of("Europe/Helsinki");
+		newSignup.arrivalTime = Date.from(arrivalTimestamp.toInstant(ZonedDateTime.now(zoneId).getOffset()));
+
+		DogparkSignupList signups = bucket.fetch(dogparkId, DogparkSignupList.class).execute();
+		signups.add(newSignup);
+		bucket.store(dogparkId, signups).execute();
+
+		return Results.redirect("/dogparks/" + dogparkId);
 	}
 
-	@Transactional
-	public Result setupTables() {
+	public Result cancelSignup() {
+		return Results.html();
+	}
+
+	public Result setupTables() throws RiakException {
 		setupKuopio();
 
 		return Results.text().renderRaw("Tables ok");
 	}
 
-	private void setupKuopio() {
-		City kuopio = new City("Kuopio");
+	private Optional<Dogpark> getDogpark(String dogparkId) throws RiakRetryFailedException {
+		Optional<Dogpark> dogpark = bucket.fetch(KEY_CITIES, CityList.class).execute().stream()
+				.flatMap(city -> city.dogparks.stream())
+				.filter(park -> dogparkId.equalsIgnoreCase(park.id))
+				.findFirst();
+		return dogpark;
+	}
 
-		Dogpark neulamaki = new Dogpark("Neulamäen koirapuisto", 62.887032, 27.609753, kuopio);
-		Dogpark rypysuo = new Dogpark("Rypysuon koirapuisto", 62.918761, 27.636628, kuopio);
+	private void setupKuopio() throws RiakException {
+		bucket.delete(KEY_CITIES).execute();
+		bucket.keys().forEach(key -> {
+				try {
+					bucket.delete(key).execute();
+				} catch (RiakException riakex) {}
+			});
 
-		List<DogparkSignup> signUps = Arrays.asList(
+		CityList cities = new CityList();
+
+		City kuopio = new City("kuopio", "Kuopio");
+		cities.add(kuopio);
+
+		Dogpark neulamaki = new Dogpark("kuopio-neulamaki", "Neulamäen koirapuisto", 62.887032, 27.609753);
+		Dogpark rypysuo = new Dogpark("kuopio-rypysuo", "Rypysuon koirapuisto", 62.918761, 27.636628);
+		kuopio.dogparks.addAll(Arrays.asList(neulamaki, rypysuo));
+
+		bucket.store(KEY_CITIES, cities).execute();
+
+		DogparkSignupList neulamakiSignups = new DogparkSignupList();
+		neulamakiSignups.add(
 				new DogparkSignup(
-						Timestamp.from(Instant.now().plus(Duration.ofDays(2))),
+						Date.from(Instant.now().plus(Duration.ofDays(2))),
 						"Seropi",
-						DogparkSignup.DogWeightClass.KG_1_TO_5,
-						true,
-						neulamaki
-				),
-				new DogparkSignup(
-						Timestamp.from(Instant.now().plus(Duration.ofDays(2))),
-						"Kääpiosnautseri",
-						DogparkSignup.DogWeightClass.KG_5_TO_10,
-						false,
-						neulamaki
-				),
-				new DogparkSignup(
-						Timestamp.from(Instant.now().plus(Duration.ofDays(5))),
-						"Seropi",
-						DogparkSignup.DogWeightClass.KG_40_PLUS,
-						true,
-						rypysuo
+						DogparkSignup.KG_1_TO_5,
+						true
 				)
 		);
+		neulamakiSignups.add(
+				new DogparkSignup(
+						Date.from(Instant.now().plus(Duration.ofDays(2))),
+						"Kääpiosnautseri",
+						DogparkSignup.KG_5_TO_10,
+						false
+				)
+		);
+		bucket.store(neulamaki.id, neulamakiSignups).execute();
 
-		ebeanServer.save(kuopio);
-		ebeanServer.save(neulamaki);
-		ebeanServer.save(rypysuo);
-		ebeanServer.save(signUps);
+
+		DogparkSignupList rypysuoSignups = new DogparkSignupList();
+		rypysuoSignups.add(
+				new DogparkSignup(
+						Date.from(Instant.now().plus(Duration.ofDays(5))),
+						"Seropi",
+						DogparkSignup.KG_40_PLUS,
+						true
+				)
+		);
+		bucket.store(rypysuo.id, rypysuoSignups).execute();
 	}
 
 }
