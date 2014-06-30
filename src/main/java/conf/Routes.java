@@ -33,10 +33,15 @@ public class Routes implements ApplicationRoutes {
 
 	@Override
 	public void init(Router router) {
-		router.POST().route("/dogparks/{id}/signups").with(DogparkController.class, "signup");
+
+		router.GET().route("/dogparks/{id}/signup").with(DogparkController.class, "signup");
+		router.POST().route("/dogparks/{id}/signup").with(DogparkController.class, "doSignupPost");
+
 		router.GET().route("/dogparks/{id}/signups").with(DogparkController.class, "dogparkSignups");
+
 		router.GET().route("/dogparks/{id}").with(DogparkController.class, "dogpark");
 		router.GET().route("/dogparks").with(DogparkController.class, "dogparkList");
+		router.GET().route("/cancel").with(DogparkController.class, "cancelSignup");
 		router.GET().route("/").with(DogparkController.class, "index");
 
 

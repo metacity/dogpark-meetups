@@ -1,0 +1,67 @@
+<#macro baseLayout active_tab="index">
+<!DOCTYPE html>
+<html lang="fi">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="description" content="KoirapuistoMiitit">
+		<meta name="author" content="Mikko Oksa">
+
+		<title>KoirapuistoMiitit</title>
+
+		<!-- Bootstrap core CSS -->
+		<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
+		<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+		<link href="${assetsAt("css/responsive-calendar.css")}" rel="stylesheet" media="screen">
+
+		<!-- Custom styles for this template -->
+		<link href="${assetsAt("css/main.css")}" rel="stylesheet">
+
+		<link href='http://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic' rel='stylesheet' type='text/css'>
+		<link href='http://fonts.googleapis.com/css?family=Raleway:400,300,700' rel='stylesheet' type='text/css'>
+
+		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+		<!--[if lt IE 9]>
+		  <script src="${assetsAt("js/html5shiv.js")}"></script>
+		  <script src="${assetsAt("js/respond.min.js")}"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+
+		<div class="container">
+			<div class="col-lg-8 col-lg-offset-2">
+				<div class="row w">
+
+					<!-- ===== Navigation ===== -->
+					<div class="col-md-4">
+						<a href="/" class="hidden-xs hidden-sm"><img class="img-responsive" src="${assetsAt("img/avatar.png")}" alt=""></a>
+						<ul class="nav nav-tabs nav-stacked" id="nav-tab">
+							<li <#if active_tab = "index">class="active"</#if>><a href="/">Etusivu</a></li>
+							<li <#if active_tab = "dogparks">class="active"</#if>><a href="/dogparks">Koirapuistot</a></li>
+							<li <#if active_tab = "cancel">class="active"</#if>><a href="/cancel">Peruuta ilmoittautuminen</a></li>
+						</ul>
+					</div><!-- col-md-4 -->
+
+					<!-- ===== Content ===== -->
+					<#nested/>
+
+				</div><!-- row w -->
+			</div><!-- col-lg-6 -->
+		</div><!-- /.container -->
+
+
+		<!-- Le JavaScript
+		================================================== -->
+		<!-- Placed at the end of the document so the pages load faster -->
+		<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+		<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+		<script src="${assetsAt("js/responsive-calendar.min.js")}"></script>
+		<script src="${assetsAt("js/spin.min.js")}"></script>
+		<script src="${assetsAt("js/jquery.spin.js")}"></script>
+		<script src="${assetsAt("js/dogparkmeetups.js")}"></script>
+
+	</body>
+</html>
+</#macro>

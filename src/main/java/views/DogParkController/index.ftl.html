@@ -1,115 +1,14 @@
-<!DOCTYPE html>
-<html lang="fi">
-	<head>
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<meta name="description" content="Koirapuisto-miitit">
-		<meta name="author" content="Mikko Oksa">
+<#import "../layout/defaultLayout.ftl.html" as layout>
+<@layout.baseLayout>
 
-		<title>KoirapuistoMiitit</title>
+<div class="col-md-8" id="main">
+	<h2><i class="fa fa-paw"></i> KoirapuistoMiitit</h2>
+	<hr>
+	<p>
+		Tällä sivustolla voit ilmoittaa meneväsi koirapuistoon, jolloin muiden on helppo nähdä, 
+		milloin omalle koiralle löytyisi sopivaa leikkiseuraa!
+	</p>
+	<p>Klikkaa "Koirapuistot" ja merkkaa!</p>
+</div>
 
-		<!-- Bootstrap core CSS -->
-		<link href="assets/css/bootstrap.min.css" rel="stylesheet"> 
-		<link href="assets/css/font-awesome.min.css" rel="stylesheet">
-		<link href="assets/css/responsive-calendar.css" rel="stylesheet" media="screen">
-
-		<!-- Custom styles for this template -->
-		<link href="assets/css/main.css" rel="stylesheet">
-
-		<link href='http://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic' rel='stylesheet' type='text/css'>
-		<link href='http://fonts.googleapis.com/css?family=Raleway:400,300,700' rel='stylesheet' type='text/css'>
-
-		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-		<!--[if lt IE 9]>
-		  <script src="assets/js/html5shiv.js"></script>
-		  <script src="assets/js/respond.min.js"></script>
-		<![endif]-->
-	</head>
-
-	<body>
-
-
-		<div class="container">
-			<div class="col-lg-8 col-lg-offset-2">
-				<div class="row w">
-					
-					<!-- ===== Navigation ===== -->
-					<div class="col-md-4">
-						<a href="/"><img class="img-responsive" src="assets/img/avatar.png" alt=""></a>
-						<ul class="nav nav-tabs nav-stacked" id="nav-tab">
-							<li class="active"><a href="#main">Etusivu</a></li>
-							<li><a href="#dogpark-list">Koirapuistot</a></li>
-							<li><a href="#cancel-signup">Peruuta ilmoittautuminen</a></li>
-							<li style="display: none"><a href="#dogpark">Koirapusto</a></li>
-						</ul>    			
-					</div><!-- col-md-4 -->
-
-					<!-- ===== Content ===== -->
-					<div class="col-md-8">
-						<div class="tab-content">
-							
-							<!-- ===== Frontpage Tab ===== -->
-							<div class="tab-pane active" id="main">
-								<h2><i class="fa fa-angle-double-right"></i> KoirapuistoMiitit</h2>
-								<hr>
-								<p>
-									Tällä sivustolla voit ilmoittaa meneväsi koirapuistoon, jolloin muiden on helppo nähdä, 
-									milloin omalle koiralle löytyisi sopivaa leikkiseuraa!
-								</p>
-								<p>Klikkaa "Koirapuistot" ja merkkaa!</p>
-							</div><!-- Frontpage Tab -->
-							
-							<!-- ===== Dog Park List Tab ===== -->
-							<div class="tab-pane" id="dogpark-list">
-								<h3><i class="fa fa-map-marker"></i> Koirapuistot</h3>
-								<hr>
-								<div id="dogpark-list-container" class="spinner">
-									<!-- Ajax loaded content.. -->
-								</div>
-							</div><!-- Dog Park List Tab -->
-							
-							<!-- ===== Cancel Signup Tab ===== -->
-							<div class="tab-pane" id="cancel-signup">
-								<h3><i class="fa fa-undo"></i> Peruuta ilmoittautuminen</h3>
-								<hr>
-								<p>
-									Koirapuistoon ilmoittautumisesi voit perua peruutuskoodilla, 
-									jonka sait ilmoittautumisen yhteydessä.
-								</p>
-								<form class="form-inline" role="form" action="/cancelSignup" method="POST">
-									<div class="form-group">
-										<label class="sr-only" for="cancellation-code">Syötä peruutuskoodi</label>
-										<input type="text" class="form-control" id="cancellation-code" placeholder="Peruutuskoodi">
-										<button type="submit" class="btn btn-warning">Lähetä</button>
-									</div>
-								</form>
-							</div><!-- Cancel Signup Tab -->
-							
-							<!-- ===== Dog Park Tab ===== -->
-							<div class="tab-pane" id="dogpark">
-								<h3></h3>
-								<hr>
-								<div id="dogpark-container" class="spinner">
-									<!-- Ajax loaded content.. -->
-								</div>
-							</div><!-- Dog Park Tab -->
-
-						</div><!-- Tab Content -->
-					</div>
-					
-				</div><!-- row w -->
-			</div><!-- col-lg-6 -->
-		</div><!-- /.container -->
-
-
-		<!-- Bootstrap core JavaScript
-		================================================== -->
-		<!-- Placed at the end of the document so the pages load faster -->
-		<script src="assets/js/jquery.js"></script>
-		<script src="assets/js/bootstrap.min.js"></script>
-		<script src="assets/js/responsive-calendar.min.js"></script>
-		<script src="assets/js/spin.min.js"></script>
-		<script src="assets/js/jquery.spin.js"></script>
-		<script src="assets/js/dogparkmeetups.js"></script>
-	</body>
-</html>
+</@layout.baseLayout>
