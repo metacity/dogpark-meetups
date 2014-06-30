@@ -221,8 +221,11 @@ iframe {
 	background-color: #f89406;
 }
 
-.popover h3, 
-.popover label {
+.popover {
+	min-width: 250px;
+}
+
+.popover h3 {
 	white-space: nowrap;
 	padding-right: 5px;
 }
