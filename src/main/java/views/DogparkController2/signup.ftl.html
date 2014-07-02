@@ -1,0 +1,56 @@
+<#import "../layout/defaultLayout.ftl.html" as layout> 
+<@layout.baseLayout active_tab = "dogparks">						
+
+<div class="col-md-8">
+	<h3><i class="fa fa-edit"></i> ${dogpark.name} :: ${date}</h3>
+	<hr>
+	
+	<div class="row">
+		<div class="col-md-7">
+			<form role="form" id="signup-form" method="POST">
+				<input name="date" value="${date}" type="hidden">
+				<div class="form-group"> 
+					<label for="timeOfArrival">Saapumisaika <small>(esim. 13:30 tai 14.45)</small></label> 
+					<input type="text" class="form-control" name="timeOfArrival" id="timeOfArrival" placeholder="Syötä kellonaika" value="12:00"> 
+				</div> 
+				<div class="form-group"> 
+					<label for="dogbreed">Koiran rotu</label> 
+					<input type="text" class="form-control" name="dogBreed" id="dogbreed" placeholder="Syötä rotu"> 
+				</div> 
+				<div class="form-group"> 
+					<label for="dogname">Koiran nimi <small>(ei pakollinen)</small></label> 
+					<input type="text" class="form-control" name="dogName" id="dogname" placeholder="Syötä nimi"> 
+				</div>
+				<div class="form-group"> 
+					<label for="dogweightclass">Koiran paino</label> 
+					<select class="form-control" name="dogWeightClass" id="dogweightclass"> 
+						<option>1-5 kg</option> 
+						<option>5-10 kg</option> 
+						<option>10-15 kg</option> 
+						<option>15-25 kg</option> 
+						<option>25-40 kg</option> 
+						<option>40+ kg</option> 
+					</select> 
+				</div> 
+				<div class="form-group"> 
+					<label class="radio-inline"> 
+						<input type="radio" name="dogIsMale" value="true" checked> 
+						Uros 
+					</label> 
+					<label class="radio-inline"> 
+						<input type="radio" name="dogIsMale" value="false"> 
+						Narttu 
+					</label> 
+				</div>
+				<hr>
+				<div class="form-group"> 
+					<label for="email">Sähköpostiosoite peruutuskoodille <br><small>(ei pakollinen)</small></label> 
+					<input type="email" class="form-control" name="email" id="email" placeholder="Syötä sähköpostiosoite"> 
+				</div>
+				<button type="submit" class="btn btn-success btn-lg"><span class="glyphicon glyphicon-ok"></span> Ilmoittaudu</button>
+			</form>
+		</div>
+	</div>
+</div>
+
+</@layout.baseLayout>
