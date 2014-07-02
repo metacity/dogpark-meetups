@@ -1,7 +1,7 @@
 $(document).ajaxStart(function() {
-	$('.spinner').spin({lines: 11, length: 0, width: 5, radius: 10, top: '100px', left: '60px'});
+	$('.spinner-loader-fa').addClass('fa-spinner fa-spin');
 }).ajaxStop(function() {
-	$('.spinner').spin(false);
+	$('.spinner-loader-fa').removeClass('fa-spinner fa-spin');
 });
 
 // -------------------------------------------------------------------
@@ -9,6 +9,12 @@ $(document).ajaxStart(function() {
 var dogparkContainer;
 
 $(document).ready(function() {
+
+	
+	$('#dogpark-list').find('.slide-toggle-next').click(function() {
+		$(this).next().toggle();
+		$(this).children('i').toggleClass('fa-folder-open-o');
+	});
 	
 	dogparkContainer = $('#dogpark');
 	if (dogparkContainer.length) {
@@ -66,7 +72,8 @@ function groupByDate(signups) {
 		}
 		
 		optionsByDate[dateString].dayEvents.push({
-			name: signup.dogBreed + ' (' + signup.dogWeightClass + ' ' + (signup.dogIsMale ? 'uros' : 'naaras') + ')',
+			name: (signup.dogName ? signup.dogName + ', ' : '') + signup.dogBreed + ' (' 
+					+ signup.dogWeightClass + ' ' + (signup.dogIsMale ? 'uros' : 'naaras') + ')',
 			hour: pad(arrivalTime.getHours()) + ':' + pad(arrivalTime.getMinutes())
 		});		
 	});
