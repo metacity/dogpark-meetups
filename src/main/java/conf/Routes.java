@@ -49,9 +49,6 @@ public class Routes implements ApplicationRoutes {
 		// Assets (pictures / javascript)
 		///////////////////////////////////////////////////////////////////////
 		router.GET().route("/assets/{fileName: .*}").with(AssetsController.class, "serveStatic");
-
-		// Debug routes
-		router.GET().route("/setupTables").with(DogparkController.class, "setupTables");
 	}
 
 }
