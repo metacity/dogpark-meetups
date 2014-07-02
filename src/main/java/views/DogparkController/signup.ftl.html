@@ -18,6 +18,10 @@
 					<input type="text" class="form-control" name="dogBreed" id="dogbreed" placeholder="Syötä rotu"> 
 				</div> 
 				<div class="form-group"> 
+					<label for="dogname">Koiran nimi <small>(ei pakollinen)</small></label> 
+					<input type="text" class="form-control" name="dogName" id="dogname" placeholder="Syötä nimi"> 
+				</div>
+				<div class="form-group"> 
 					<label for="dogweightclass">Koiran paino</label> 
 					<select class="form-control" name="dogWeightClass" id="dogweightclass"> 
 						<option>1-5 kg</option> 
@@ -37,8 +41,13 @@
 						<input type="radio" name="dogIsMale" value="false"> 
 						Narttu 
 					</label> 
-				</div> 
-				<button type="submit" class="btn btn-success">Ilmoittaudu</button>
+				</div>
+				<hr>
+				<div class="form-group"> 
+					<label for="email">Sähköpostiosoite peruutuskoodille <br><small>(ei pakollinen)</small></label> 
+					<input type="email" class="form-control" name="email" id="email" placeholder="Syötä sähköpostiosoite"> 
+				</div>
+				<button type="submit" class="btn btn-success btn-lg"><span class="glyphicon glyphicon-ok"></span> Ilmoittaudu</button>
 			</form>
 		</div>
 	</div>
