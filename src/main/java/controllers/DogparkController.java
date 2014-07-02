@@ -28,9 +28,10 @@ import com.basho.riak.client.RiakException;
 import com.basho.riak.client.RiakFactory;
 import com.basho.riak.client.RiakRetryFailedException;
 import com.basho.riak.client.bucket.Bucket;
+import com.google.common.escape.Escaper;
+import com.google.common.html.HtmlEscapers;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -39,12 +40,11 @@ import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import models.City;
 import models.CityList;
 import models.Dogpark;
 import models.DogparkSignup;
@@ -59,7 +59,6 @@ import ninja.params.PathParam;
 import ninja.utils.NinjaProperties;
 import org.slf4j.Logger;
 
-//@FilterWith(LatencySimulatorFilter.class)
 @Singleton
 public class DogparkController {
 
@@ -133,16 +132,32 @@ public class DogparkController {
 			return Results.notFound().json();
 		}
 
-		final Instant timeLower = YearMonth.parse(yearMonth).atDay(1).minusMonths(1).atStartOfDay().toInstant(ZoneOffset.UTC);
-		final Instant timeUpper = YearMonth.parse(yearMonth).atDay(1).plusMonths(6).atStartOfDay().toInstant(ZoneOffset.UTC);
-		List<DogparkSignup> signups = bucket.fetch(dogparkId, DogparkSignupList.class).execute().stream()
+		Instant timeLower = YearMonth.parse(yearMonth)
+				.atDay(1)
+				.minusMonths(1)
+				.atStartOfDay()
+				.toInstant(ZoneOffset.UTC);
+		Instant timeUpper = YearMonth.parse(yearMonth)
+				.atDay(1)
+				.plusMonths(6)
+				.atStartOfDay()
+				.toInstant(ZoneOffset.UTC);
+		
+		DogparkSignupList allSignups = bucket.fetch(dogparkId, DogparkSignupList.class).execute();
+		if (allSignups != null) { // Might very well be empty
+			List<DogparkSignup> signups = allSignups.stream()
 				.filter(signup -> {
 					Instant arrival = signup.arrivalTime.toInstant();
 					return arrival.isAfter(timeLower) && arrival.isBefore(timeUpper);
 				})
+				.peek(signup -> signup.cancellationCode = null)
 				.collect(Collectors.toList());
-
-		return Results.json().render(signups);
+			return Results.json().render(signups);
+			
+		} else {
+			return Results.json().render(Collections.emptyList());
+		}
+		
 	}
 
 	public Result signup(
@@ -164,6 +179,15 @@ public class DogparkController {
 			@Param("date") String date,
 			@Param("timeOfArrival") String timeOfArrival,
 			DogparkSignup newSignup) throws RiakRetryFailedException {
+		
+		// Escape against HTML 
+		Escaper htmlEscaper = HtmlEscapers.htmlEscaper();
+		newSignup.dogBreed = htmlEscaper.escape(newSignup.dogBreed);
+		newSignup.dogName = htmlEscaper.escape(newSignup.dogName);
+		newSignup.dogWeightClass = htmlEscaper.escape(newSignup.dogWeightClass);
+		
+		// Generate UUID cancellation code
+		newSignup.generateCancellationCode();
 
 		timeOfArrival = timeOfArrival.replace('.', ':');
 		LocalDateTime arrivalTimestamp = LocalDateTime.parse(date + " " + timeOfArrival,
@@ -173,6 +197,9 @@ public class DogparkController {
 		newSignup.arrivalTime = Date.from(arrivalTimestamp.toInstant(ZonedDateTime.now(zoneId).getOffset()));
 
 		DogparkSignupList signups = bucket.fetch(dogparkId, DogparkSignupList.class).execute();
+		if (signups == null) {
+			signups = new DogparkSignupList();
+		}
 		signups.add(newSignup);
 		bucket.store(dogparkId, signups).execute();
 
@@ -183,69 +210,12 @@ public class DogparkController {
 		return Results.html();
 	}
 
-	public Result setupTables() throws RiakException {
-		setupKuopio();
-
-		return Results.text().renderRaw("Tables ok");
-	}
-
 	private Optional<Dogpark> getDogpark(String dogparkId) throws RiakRetryFailedException {
 		Optional<Dogpark> dogpark = bucket.fetch(KEY_CITIES, CityList.class).execute().stream()
 				.flatMap(city -> city.dogparks.stream())
 				.filter(park -> dogparkId.equalsIgnoreCase(park.id))
 				.findFirst();
 		return dogpark;
-	}
-
-	private void setupKuopio() throws RiakException {
-		bucket.delete(KEY_CITIES).execute();
-		bucket.keys().forEach(key -> {
-				try {
-					bucket.delete(key).execute();
-				} catch (RiakException riakex) {}
-			});
-
-		CityList cities = new CityList();
-
-		City kuopio = new City("kuopio", "Kuopio");
-		cities.add(kuopio);
-
-		Dogpark neulamaki = new Dogpark("kuopio-neulamaki", "Neulamäen koirapuisto", 62.887032, 27.609753);
-		Dogpark rypysuo = new Dogpark("kuopio-rypysuo", "Rypysuon koirapuisto", 62.918761, 27.636628);
-		kuopio.dogparks.addAll(Arrays.asList(neulamaki, rypysuo));
-
-		bucket.store(KEY_CITIES, cities).execute();
-
-		DogparkSignupList neulamakiSignups = new DogparkSignupList();
-		neulamakiSignups.add(
-				new DogparkSignup(
-						Date.from(Instant.now().plus(Duration.ofDays(2))),
-						"Seropi",
-						DogparkSignup.KG_1_TO_5,
-						true
-				)
-		);
-		neulamakiSignups.add(
-				new DogparkSignup(
-						Date.from(Instant.now().plus(Duration.ofDays(2))),
-						"Kääpiosnautseri",
-						DogparkSignup.KG_5_TO_10,
-						false
-				)
-		);
-		bucket.store(neulamaki.id, neulamakiSignups).execute();
-
-
-		DogparkSignupList rypysuoSignups = new DogparkSignupList();
-		rypysuoSignups.add(
-				new DogparkSignup(
-						Date.from(Instant.now().plus(Duration.ofDays(5))),
-						"Seropi",
-						DogparkSignup.KG_40_PLUS,
-						true
-				)
-		);
-		bucket.store(rypysuo.id, rypysuoSignups).execute();
 	}
 
 }
