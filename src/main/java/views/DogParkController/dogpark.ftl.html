@@ -5,7 +5,7 @@
 	<h3><i class="glyphicon glyphicon-tree-deciduous"></i> ${dogpark.name}</h3>
 	<hr>
 	
-	<h4><i class="fa fa-calendar"></i> Kalenteri <small>(tapahtumat viime kuulta ja 6kk eteenpäin)</small></h4>
+	<h4><i class="fa fa-calendar spinner-loader-fa"></i> Kalenteri <small>(ilmoittautumiset viime kuulta ja 6kk eteenpäin)</small></h4>
 	<!-- Responsive calendar - START -->
 	<div class="responsive-calendar" id="dogpark-calendar">
 		<div class="controls">
@@ -30,11 +30,12 @@
 
 	<h4><i class="fa fa-map-marker"></i> Sijainti</h4>
 	<iframe 
-		width="430" 
-		height="350" 
+		width="450" 
+		height="500" 
 		frameborder="0" 
 		src="https://www.google.com/maps/embed/v1/place?q=${dogpark.latitude}%2C${dogpark.longitude}
-		&key=AIzaSyBsBgvJq2xlk1o3zZxW9rI074kaq1nZl7I&zoom=15">
+		&key=AIzaSyBsBgvJq2xlk1o3zZxW9rI074kaq1nZl7I&zoom=15"
+		style="width: 100%">
 	</iframe>
 </div>
 
