@@ -1,0 +1,23 @@
+<#import "../layout/defaultLayout.ftl.html" as layout> 
+<@layout.baseLayout active_tab = "dogparks">    
+
+<div class="col-md-8" id="dogpark-list">
+	<h3><i class="fa fa-map-marker"></i> Koirapuistot</h3>
+	<hr>
+	<div>
+		<#list cities as city>
+		<h4 class="slide-toggle-next"><i class="fa fa-folder-o fa-fw"></i> ${city.name} <small>(${city.dogparks?size})</small></h4>
+		<ul class="fa-ul">
+			<#list city.dogparks as dogpark>
+			<li><i class="fa-li fa fa-angle-right fa-fw"></i> <a href="/dogparks/${dogpark.id}">${dogpark.name}</a></li>
+			</#list>
+		</ul>
+		</#list>
+	</div>
+</div>
+
+</@layout.baseLayout>						
+
+
+
+						
