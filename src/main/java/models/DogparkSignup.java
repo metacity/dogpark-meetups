@@ -24,10 +24,11 @@
 
 package models;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import java.util.Date;
 import java.util.UUID;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class DogparkSignup {
 
 	public static final String KG_1_TO_5 = "1-5 kg";
@@ -39,24 +40,28 @@ public class DogparkSignup {
 
 	public Date arrivalTime;
 
+	public String dogName;
+	
 	public String dogBreed;
 
 	public String dogWeightClass;
 
 	public boolean dogIsMale;
 
-	@JsonIgnore
 	public String cancellationCode;
 
 	public DogparkSignup() {
 	}
 
-	public DogparkSignup(Date arrivalTime, String dogBreed, String dogWeightClass, boolean dogIsMale) {
+	public DogparkSignup(Date arrivalTime, String dogName, String dogBreed, String dogWeightClass, boolean dogIsMale) {
 		this.arrivalTime = arrivalTime;
+		this.dogName = dogName;
 		this.dogBreed = dogBreed;
 		this.dogWeightClass = dogWeightClass;
 		this.dogIsMale = dogIsMale;
-
+	}
+	
+	public void generateCancellationCode() {
 		this.cancellationCode = UUID.randomUUID().toString();
 	}
 
