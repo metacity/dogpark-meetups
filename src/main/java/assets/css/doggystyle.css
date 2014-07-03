@@ -20,16 +20,15 @@ iframe, .map-container {
 	border: 1px solid #bdc3c7;
 }
 
-.tab-content h2,
-.tab-content h3 {
-	margin: 0px;
+#dogpark-calendar {
+	text-align: center;
 }
 
 .responsive-calendar .day {
 	margin: 2px;
 	display: inline-block;
 	position: relative;
-	width: 13.25%;
+	width: 12%;
 	text-align: center;
 	font-size: 16px;
 }
