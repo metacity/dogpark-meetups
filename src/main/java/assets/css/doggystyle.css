@@ -25,10 +25,10 @@ iframe, .map-container {
 }
 
 .responsive-calendar .day {
-	margin: 2px;
+	/* margin: 2px; */
 	display: inline-block;
 	position: relative;
-	width: 12%;
+	width: 14.285714285714286%;
 	text-align: center;
 	font-size: 16px;
 }
