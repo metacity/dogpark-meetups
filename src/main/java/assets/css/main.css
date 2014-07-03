@@ -12,11 +12,11 @@ body {
     font-weight: 300;
     font-size: 16px;
     color: #555;
-    padding-top: 50px;
+/*    padding-top: 50px; */
 	padding-bottom: 50px;
-	background-image: url("../img/bg.png");
+	/* background-image: url("../img/bg.png"); */
 	background-repeat: repeat;
-	/*	background-color: #94897A;*/
+	background-color: #7b7b7b;
 }
 
 /* Titles */
@@ -39,7 +39,8 @@ p {
 
 /* Links */
 a {
-    color: #1abc9c;
+/*    color: #1abc9c;*/
+	color: #c7254e;
     word-wrap: break-word;
 
     -webkit-transition: color 0.1s ease-in, background 0.1s ease-in;
@@ -77,9 +78,9 @@ hr {
 .w {
 	background-color: #ffffff;
 	border: 1px solid #dddddd;
-	-moz-box-shadow: 5px 5px rgba(0,0,0,0.2);
-	-webkit-box-shadow: 5px 5px rgba(0,0,0,0.2);
-	box-shadow: 5px 5px rgba(0,0,0,0.2);
+	-moz-box-shadow: 4px 4px rgba(0,0,0,0.2);
+	-webkit-box-shadow: 4px 4px rgba(0,0,0,0.2);
+	box-shadow: 4px 4px rgba(0,0,0,0.2);
 }
 
 
@@ -101,7 +102,7 @@ hr {
 .nav-tabs > li.active > a:hover, 
 .nav-tabs > li.active > a:focus {
 	color: #555555;
-	cursor: default;
+	cursor: pointer;
 	background-color: #ffffff;
 	border-left: 5px solid #1abc9c;
 	border-bottom-color: transparent;
@@ -159,87 +160,4 @@ a h6:hover {
 grey {
 	color: #bdc3c7;
 	font-weight: 700;
-}
-
-iframe {
-
-	border: 1px solid #bdc3c7;
-}
-
-.tab-content h2,
-.tab-content h3 {
-	margin: 0px;
-}
-
-.spinner {
-	min-height: 50px;
-}
-
-.responsive-calendar .day {
-	margin: 2px;
-	display: inline-block;
-	position: relative;
-	width: 13.25%;
-	text-align: center;
-	font-size: 16px;
-}
-
-.responsive-calendar .day a {
-	-webkit-border-radius: 4px;
-	-moz-border-radius: 4px;
-	border-radius: 4px;
-}
-
-.responsive-calendar .day .badge {
-	position: absolute;
-	top: 1px;
-	right: 1px;
-	z-index: 1;
-
-	-webkit-border-top-right-radius: 2px;
-	-moz-border-radius-topright: 2px;
-	border-top-right-radius: 2px;
-	
-	-webkit-border-top-left-radius: 0;
-	-moz-border-radius-topleft: 0;
-	border-top-left-radius: 0;
-	
-	-webkit-border-bottom-right-radius: 0;
-	-moz-border-radius-bottomright: 0;
-	border-bottom-right-radius: 0;
-	
-	-webkit-border-bottom-left-radius: 5px;
-	-moz-border-radius-bottomleft: 5px;
-	border-bottom-left-radius: 5px;
-	
-	padding: 2px 5px;
-}
-
-.badge-warning {
-	background-color: #f89406;
-}
-
-.popover {
-	min-width: 250px;
-}
-
-.popover h3 {
-	white-space: nowrap;
-	padding-right: 5px;
-}
-
-.popover .close {
-	margin-top: -8px;
-}
-
-#dogpark-list h4 {
-	cursor: pointer;
-}
-
-#dogpark-list ul {
-	display: none;
-}
-
-label small {
-	font-weight: 500;
 }
