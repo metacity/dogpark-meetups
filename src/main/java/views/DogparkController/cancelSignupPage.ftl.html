@@ -1,0 +1,40 @@
+<#import "../layout/defaultLayout.ftl.html" as layout> 
+<@layout.baseLayout active_tab = "cancel">    
+
+<div class="col-lg-12" id="cancel-signup">
+	<h3><i class="fa fa-undo"></i> Peruuta ilmoittautuminen</h3>
+	<hr>
+	
+	<#if flash.success?? || flash.error??>
+		<#if flash.success??>
+		<div class="alert alert-dismissable alert-success">
+		</#if>
+		<#if flash.error??>
+		<div class="alert alert-dismissable alert-danger">
+		</#if>
+			<button type="button" class="close" data-dismiss="alert">×</button>
+			<strong>${flash.success!flash.error}</strong>
+			<#if flash.cancellationMsg??>
+				<p>${flash.cancellationMsg}</p>
+			</#if>
+		</div>
+	</#if>
+	
+	<p>
+		Koirapuistoon ilmoittautumisesi voit perua peruutuskoodilla, 
+		jonka sait ilmoittautumisen yhteydessä.
+	</p>
+	<form class="form-inline" role="form" method="POST">
+		<div class="form-group">
+			<label class="sr-only" for="cancellation-code">Syötä peruutuskoodi</label>
+			<input type="text" class="form-control" name="cancellationCode" id="cancellation-code" placeholder="Peruutuskoodi">
+			<button type="submit" class="btn btn-warning">Lähetä</button>
+		</div>
+	</form>
+</div>
+
+</@layout.baseLayout>						
+
+
+
+						
