@@ -155,6 +155,8 @@ function validateSignupForm(event) {
 	
 	if (hasErrors) {
 		event.preventDefault();
+	} else {
+		$(this).find('button > span').addClass('fa-spinner fa-spin');
 	}
 }
 
