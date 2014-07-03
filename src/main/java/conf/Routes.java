@@ -26,6 +26,7 @@ package conf;
 
 import controllers.DogparkController;
 import ninja.AssetsController;
+import ninja.Results;
 import ninja.Router;
 import ninja.application.ApplicationRoutes;
 
@@ -34,15 +35,20 @@ public class Routes implements ApplicationRoutes {
 	@Override
 	public void init(Router router) {
 
-		router.GET().route("/dogparks/{id}/signup").with(DogparkController.class, "signup");
+		router.GET().route("/cancel").with(Results.html().template("views/DogparkController/cancelSignupPage.ftl.html"));
+		router.POST().route("/cancel").with(DogparkController.class, "doCancelSignupPost");
+		
+		router.GET().route("/dogparks/{id}/signup").with(DogparkController.class, "signupPage");
 		router.POST().route("/dogparks/{id}/signup").with(DogparkController.class, "doSignupPost");
 
 		router.GET().route("/dogparks/{id}/signups").with(DogparkController.class, "dogparkSignups");
 
-		router.GET().route("/dogparks/{id}").with(DogparkController.class, "dogpark");
-		router.GET().route("/dogparks").with(DogparkController.class, "dogparkList");
-		router.GET().route("/cancel").with(DogparkController.class, "cancelSignup");
-		router.GET().route("/").with(DogparkController.class, "index");
+		router.GET().route("/dogparks/{id}").with(DogparkController.class, "dogparkPage");
+		router.GET().route("/dogparks").with(DogparkController.class, "dogparkListPage");
+		
+		router.GET().route("/map").with(Results.html().template("views/DogparkController/map.ftl.html"));
+		router.GET().route("/dogparks.json").with(DogparkController.class, "allDogparks");
+		router.GET().route("/").with(Results.html().template("views/DogparkController/index.ftl.html"));
 
 
 		///////////////////////////////////////////////////////////////////////
