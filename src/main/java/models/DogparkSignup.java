@@ -25,6 +25,9 @@
 package models;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.google.common.base.Strings;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.UUID;
 
@@ -50,19 +53,16 @@ public class DogparkSignup {
 
 	public String cancellationCode;
 
-	public DogparkSignup() {
-	}
-
-	public DogparkSignup(Date arrivalTime, String dogName, String dogBreed, String dogWeightClass, boolean dogIsMale) {
-		this.arrivalTime = arrivalTime;
-		this.dogName = dogName;
-		this.dogBreed = dogBreed;
-		this.dogWeightClass = dogWeightClass;
-		this.dogIsMale = dogIsMale;
-	}
-	
 	public void generateCancellationCode() {
 		this.cancellationCode = UUID.randomUUID().toString();
+	}
+	
+	@Override
+	public String toString() {
+		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd.MM.yyyy 'klo' HH:mm").withZone(ZoneId.of("Europe/Helsinki"));
+		return dtf.format(arrivalTime.toInstant()) + ": " 
+				+ (Strings.isNullOrEmpty(dogName) ? "" : dogName + ", ")
+				+ dogBreed + " (" + dogWeightClass + (dogIsMale ? " uros" : " narttu") + ")";
 	}
 
 }

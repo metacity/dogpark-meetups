@@ -34,12 +34,4 @@ public class City {
 	public String name;
 
 	public List<Dogpark> dogparks = new ArrayList<>();
-
-	public City() {
-	}
-
-	public City(String id, String name) {
-		this.name = name;
-	}
-
 }

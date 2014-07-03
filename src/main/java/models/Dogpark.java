@@ -23,7 +23,9 @@
  */
 package models;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Dogpark {
 
 	public String id;
@@ -33,14 +35,4 @@ public class Dogpark {
 	public double latitude;
 
 	public double longitude;
-
-	public Dogpark() {
-	}
-
-	public Dogpark(String id, String name, double latitude, double longitude) {
-		this.id = id;
-		this.name = name;
-		this.latitude = latitude;
-		this.longitude = longitude;
-	}
 }
