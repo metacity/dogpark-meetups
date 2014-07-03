@@ -34,6 +34,11 @@ $(document).ready(function() {
 		loadCalendar();
 	}
 	
+	var dogparkMap = $('#dogpark-map');
+	if (dogparkMap.length) {
+		loadDogparkMap();
+	}
+	
 	$('#signup-form').submit(validateSignupForm);
 });
 
@@ -125,9 +130,7 @@ function showSignupsPopup(events) {
 		content: eventsHtml,
 		container: dogparkContainer
 	});
-	//dogparkContainer.find('.day a').not(this).popover('destroy');
 	$(this).popover('toggle');
-	//return false;
 }
 
 // Some refactoring needed..
@@ -153,4 +156,30 @@ function validateSignupForm(event) {
 	if (hasErrors) {
 		event.preventDefault();
 	}
+}
+
+function loadDogparkMap() {
+	var mapOptions = {
+		zoom: 6,
+		center: new google.maps.LatLng(63.5317133,26.2920269)
+	};
+
+	var map = new google.maps.Map(document.getElementById('map-container'),	mapOptions);
+	
+	$.getJSON('/dogparks.json', function(dogparks) {
+		$.each(dogparks, function(i, dogpark) {
+			var marker = new google.maps.Marker({
+				position: new google.maps.LatLng(dogpark.latitude, dogpark.longitude),
+				map: map,
+				title: dogpark.name
+			});
+			var infoWindow = new google.maps.InfoWindow({
+				content: '<div class="scroll-fix"><p><a href="/dogparks/' + dogpark.id + '"><strong>' + dogpark.name + '</strong></a></p></div>'
+			});
+			google.maps.event.addListener(marker, 'click', function() {
+				infoWindow.open(map, marker);
+			});
+			//markers.push(marker);
+		});
+	});
 }
