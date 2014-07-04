@@ -55,7 +55,6 @@ function loadCalendar() {
 	$.getJSON(window.location.href + '/signups?yearMonth=' + now.getFullYear() + '-' + pad(now.getMonth()+1), function(signups) {
 		var calendarEvents = groupByDate(signups);
 		calendarOptions.events = calendarEvents;
-		console.log(calendarOptions);
 		$('#dogpark-calendar').responsiveCalendar(calendarOptions);
 	});
 }
@@ -181,7 +180,6 @@ function loadDogparkMap() {
 			google.maps.event.addListener(marker, 'click', function() {
 				infoWindow.open(map, marker);
 			});
-			//markers.push(marker);
 		});
 	});
 }
