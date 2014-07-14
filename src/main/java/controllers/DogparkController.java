@@ -169,6 +169,7 @@ public class DogparkController {
 					return arrival.isAfter(timeLower) && arrival.isBefore(timeUpper);
 				})
 				.peek(signup -> signup.cancellationCode = null)
+				.sorted((signup1, signup2) -> signup1.arrivalTime.compareTo(signup2.arrivalTime))
 				.collect(Collectors.toList());
 			return Results.json().render(signups);
 			
