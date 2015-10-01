@@ -222,6 +222,11 @@ public class DogparkController {
 		ZoneId zoneId = ZoneId.of("Europe/Helsinki");
 		newSignup.arrivalTime = Date.from(arrivalTimestamp.toInstant(ZonedDateTime.now(zoneId).getOffset()));
 
+		/* 
+		 Ok there's actually a race condition here: since signups are stored as a string (JSON Array),
+		 it's possible that two threads simultaneously adding a signup to the same dogpark results in 
+		 losing of the first one. See principal as in the "i++ race condition". 
+		*/
 		// Add to signups list
 		DogparkSignupList signups = bucket.fetch(dogparkId, DogparkSignupList.class).execute();
 		if (signups == null) {
